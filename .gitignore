@@ -3,5 +3,4 @@ vnev/
 __pycache__/
 .vscode/
 .DS_Store
-*.csv
 responses.csv
