@@ -1,1 +1,6 @@
 flask
+numpy
+scikit-learn
+pandas
+reportlab
+gunicorn
