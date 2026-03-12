@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>クルマ診断 | Honda Cars 茨城 / Honda Cars 福島</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red:       #cc0000;
+      --red-dark:  #a00000;
+      --gray-bg:   #f2f2f4;
+      --gray-mid:  #e0e0e0;
+      --text:      #1e1e1e;
+      --text-sub:  #666;
+    }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--gray-bg);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .site-header {
+      background: #fff;
+      border-bottom: 3px solid var(--red);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 0 32px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .site-header .brand { display: flex; align-items: center; gap: 16px; text-decoration: none; }
+    .site-header .brand img { height: 56px; object-fit: contain; }
+    .site-header .brand-text { font-size: 0.88rem; font-weight: 700; color: var(--red); line-height: 1.5; }
+    .header-tag {
+      font-size: 0.75rem; color: var(--text-sub);
+      background: var(--gray-bg); border: 1px solid var(--gray-mid);
+      padding: 4px 14px; border-radius: 20px;
+    }
+
+    /* Hero */
+    .hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+
+    /* Card */
+    .card-welcome {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+      width: 100%;
+      max-width: 600px;
+      overflow: hidden;
+    }
+    .card-top-bar {
+      height: 6px;
+      background: linear-gradient(90deg, var(--red-dark), var(--red), #ff4444);
+    }
+    .card-body {
+      padding: 40px 52px 36px;
+      text-align: center;
+    }
+    .card-logo {
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .card-title em { color: var(--red); font-style: normal; }
+    .card-sub {
+      font-size: 0.92rem;
+      color: var(--text-sub);
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    /* Steps */
+    .steps { display: flex; gap: 12px; margin-bottom: 28px; }
+    .step {
+      flex: 1;
+      background: var(--gray-bg);
+      border-radius: 12px;
+      padding: 14px 8px;
+      text-align: center;
+    }
+    .step-num {
+      display: block;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--red);
+      margin-bottom: 6px;
+    }
+    .step-label { font-size: 0.78rem; color: var(--text-sub); line-height: 1.5; }
+
+    /* Button */
+    .btn-start {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 14px 60px;
+      border-radius: 50px;
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      box-shadow: 0 6px 20px rgba(204,0,0,0.4);
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-start:hover {
+      background: var(--red-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(160,0,0,0.5);
+      color: #fff;
+    }
+    .note { margin-top: 12px; font-size: 0.75rem; color: #aaa; }
+
+    /* Footer */
+    .site-footer {
+      background: #222;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.72rem;
+      text-align: center;
+      padding: 14px;
+      flex-shrink: 0;
+    }
+    .site-footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .card-body { padding: 28px 24px 24px; }
+      .card-title { font-size: 1.4rem; }
+      .card-logo { height: 72px; }
+      .btn-start { font-size: 1rem; padding: 13px 44px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="https://www.sekisho-honda.com/" class="brand" target="_blank">
+      <img src="{{ url_for('static', filename='image/honda-logo.jpg') }}" alt="Honda" />
+      <span class="brand-text">Honda Cars 茨城<br>Honda Cars 福島</span>
+    </a>
+    <span class="header-tag">クルマ診断ツール</span>
+  </header>
+
+  <main class="hero">
+    <div class="card-welcome">
+      <div class="card-top-bar"></div>
+      <div class="card-body">
+
+        <img class="card-logo"
+             src="{{ url_for('static', filename='image/honda-logo.jpg') }}"
+             alt="Honda" />
+
+        <h1 class="card-title">
+          あなたにぴったりの<br><em>ホンダ車</em>を見つけましょう
+        </h1>
+        <p class="card-sub">
+          いくつかの質問に答えるだけで、<br>
+          セキショウホンダのスタッフがあなたに<br>
+          最適な車種を3台ご提案します。
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">①</span>
+            <span class="step-label">アンケート<br>に回答</span>
+          </div>
+          <div class="step">
+            <span class="step-num">②</span>
+            <span class="step-label">AIが<br>分析</span>
+          </div>
+          <div class="step">
+            <span class="step-num">③</span>
+            <span class="step-label">最適な<br>3台を提案</span>
+          </div>
+        </div>
+
+        <a href="/questionnaire" class="btn-start">診断スタート</a>
+        <p class="note">⏱ 所要時間：約2〜3分</p>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <a href="https://www.sekisho-honda.com/" target="_blank">Honda Cars 茨城 / Honda Cars 福島</a>
+    &nbsp;｜&nbsp; セキショウホンダ &copy; 2025
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Responses</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .response-table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 90%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .response-table th,
+        .response-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .response-table th {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .download-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            text-decoration: none;
+            background-color: #3498db;
+            color: white;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>User Responses</h2>
+
+    {{ table|safe }}
+
+    <a href="/download" class="download-btn">Download CSV</a>
+
+</body>
+</html>

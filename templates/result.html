@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>診断結果 | Honda Cars 茨城 / Honda Cars 福島</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --honda-red:       #cc0000;
+            --honda-red-dark:  #a00000;
+            --honda-red-light: #ff4444;
+            --honda-red-pale:  #fff4f4;
+            --accent-gold:     #e8a000;
+            --accent-green:    #00875a;
+            --accent-blue:     #0052cc;
+            --text-primary:    #1a1a1a;
+            --text-secondary:  #4a4a4a;
+            --text-muted:      #888888;
+            --bg-page:         #f4f4f6;
+            --bg-card:         #ffffff;
+            --border:          #e0e0e0;
+            --shadow-card:     0 2px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+            --shadow-hover:    0 8px 32px rgba(204,0,0,0.10), 0 2px 12px rgba(0,0,0,0.07);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ── Site Header ── */
+        .site-header {
+            background: #ffffff;
+            border-bottom: 3px solid var(--honda-red);
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .site-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+        .site-header .brand img { height: 56px; object-fit: contain; }
+        .site-header .brand-text {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--honda-red);
+            line-height: 1.4;
+        }
+        .header-back {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .header-back:hover { color: var(--honda-red); }
+
+        /* ── Page header ── */
+        .page-header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 28px 24px 22px;
+            text-align: center;
+        }
+        .page-header-inner {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .result-label {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--honda-red);
+            background: var(--honda-red-pale);
+            border: 1px solid #ffcccc;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        .page-header h1 {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            font-weight: 900;
+            color: var(--text-primary);
+            margin: 0 0 6px;
+            line-height: 1.3;
+        }
+        .page-header h1 span { color: var(--honda-red); }
+        .page-header .subtitle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ── Main container ── */
+        .main-container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 28px 20px 60px;
+        }
+
+        /* ── Car card ── */
+        .car-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease, transform 0.25s ease;
+            border: 1px solid var(--border);
+        }
+        .car-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Card top bar */
+        .card-topbar {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-topbar.aspect-balance { background: #fffbf0; }
+        .card-topbar.aspect-feature  { background: var(--honda-red-pale); }
+        .card-topbar.aspect-budget   { background: #f0fff8; }
+        .card-topbar.aspect-used     { background: #f0f6ff; }
+
+        .rank-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .rank-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25rem;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+        .rank-circle.rank-1 {
+            background: linear-gradient(135deg, #b70000, #e63030);
+            box-shadow: 0 3px 10px rgba(204,0,0,0.35);
+        }
+        .rank-circle.rank-2 { background: linear-gradient(135deg, #5a6268, #868e96); }
+        .rank-circle.rank-3 { background: linear-gradient(135deg, #b85c00, #e07820); }
+
+        .rank-text {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+        .rank-text strong {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-primary);
+        }
+
+        .aspect-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 16px;
+            letter-spacing: 0.3px;
+        }
+        .aspect-balance .aspect-badge { background: var(--accent-gold); color: #fff; }
+        .aspect-feature  .aspect-badge { background: var(--honda-red); color: white; }
+        .aspect-budget   .aspect-badge { background: var(--accent-green); color: white; }
+        .aspect-used     .aspect-badge { background: var(--accent-blue); color: white; }
+
+        .score-display {
+            margin-left: auto;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .score-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            color: var(--honda-red);
+            line-height: 1;
+        }
+        .score-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        /* Card body */
+        .card-body-inner { padding: 20px; }
+
+        .car-main-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .car-image-wrap {
+            flex-shrink: 0;
+            width: 200px;
+        }
+        .car-image-wrap img {
+            width: 100%;
+            height: 130px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f8f8f8;
+            padding: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .car-info { flex: 1; min-width: 0; }
+
+        .car-name {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin: 0 0 4px;
+            line-height: 1.25;
+        }
+        .car-name span { color: var(--honda-red); }
+
+        .car-desc {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin: 0 0 12px;
+        }
+
+        /* Budget pill */
+        .budget-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        .budget-pill.fit    { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .budget-pill.exceed { background: #fff8e1; color: #e65100; border: 1px solid #ffe082; }
+
+        /* Warning */
+        .warning-strip {
+            background: #fff8e1;
+            border-left: 3px solid var(--accent-gold);
+            border-radius: 0 8px 8px 0;
+            padding: 8px 12px;
+            margin: 8px 0 0;
+            font-size: 0.77rem;
+            color: #7a5800;
+        }
+
+        /* CTA buttons */
+        .card-cta {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .btn-cta-new {
+            background: var(--honda-red);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-cta-new:hover { background: var(--honda-red-dark); color: white; transform: translateY(-1px); }
+
+        .btn-cta-used {
+            background: white;
+            color: var(--honda-red);
+            border: 2px solid var(--honda-red);
+            padding: 6px 18px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-cta-used:hover { background: var(--honda-red-pale); color: var(--honda-red-dark); transform: translateY(-1px); }
+
+        .btn-cta-disabled {
+            background: #f5f5f5;
+            color: #bbb;
+            border: 2px solid #e0e0e0;
+            padding: 6px 18px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: not-allowed;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ── Feature section ── */
+        .feature-section {
+            border-top: 1px solid var(--border);
+            padding: 18px 20px 20px;
+            background: #fafafa;
+        }
+
+        .feature-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .feature-section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .feature-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover {
+            border-color: #ffcccc;
+            box-shadow: 0 2px 10px rgba(204,0,0,0.06);
+        }
+        .feature-card.primary {
+            border-left: 3px solid var(--honda-red);
+            background: linear-gradient(135deg, #fffafa, white);
+        }
+
+        .feature-card-header {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 6px;
+        }
+        .feature-icon { font-size: 1.1rem; line-height: 1; }
+        .feature-label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .feature-label .primary-tag {
+            font-size: 0.6rem;
+            background: var(--honda-red);
+            color: white;
+            padding: 1px 5px;
+            border-radius: 8px;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        .feature-detail {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* ── Divider between cars ── */
+        .cars-divider {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin: 4px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cars-divider::before, .cars-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── Dealer contact section ── */
+        .dealer-section {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: var(--shadow-card);
+        }
+        .dealer-section h3 {
+            font-size: 0.95rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        .dealer-section p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .dealer-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-dealer {
+            background: var(--honda-red);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-dealer:hover { background: var(--honda-red-dark); color: white; }
+        .btn-dealer.outline {
+            background: white;
+            color: var(--honda-red);
+            border: 2px solid var(--honda-red);
+        }
+        .btn-dealer.outline:hover { background: var(--honda-red-pale); }
+
+        /* ── Retry button ── */
+        .retry-section { text-align: center; padding: 8px 0 0; }
+        .btn-retry {
+            background: white;
+            color: var(--honda-red);
+            border: 2px solid var(--honda-red);
+            padding: 12px 40px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 0.03em;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        .btn-retry:hover {
+            background: var(--honda-red);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* ── Footer ── */
+        .site-footer {
+            background: #222;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.70rem;
+            text-align: center;
+            padding: 12px;
+            margin-top: 20px;
+        }
+        .site-footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .car-main-row { flex-direction: column; }
+            .car-image-wrap { width: 100%; }
+            .car-image-wrap img { height: 160px; }
+            .feature-cards-grid { grid-template-columns: 1fr; }
+            .card-cta { flex-direction: column; }
+            .btn-cta-new, .btn-cta-used, .btn-cta-disabled { justify-content: center; }
+            .dealer-btns { flex-direction: column; }
+            .btn-dealer { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Site header -->
+<header class="site-header">
+    <a href="https://www.sekisho-honda.com/" class="brand" target="_blank">
+        <img src="{{ url_for('static', filename='image/honda-logo.jpg') }}" alt="Honda" />
+        <span class="brand-text">Honda Cars 茨城<br>Honda Cars 福島</span>
+    </a>
+    <a href="/questionnaire" class="header-back">← やり直す</a>
+</header>
+
+<!-- Page header -->
+<div class="page-header">
+    <div class="page-header-inner">
+        <div class="result-label">診断結果</div>
+        <h1>あなたへの <span>おすすめ</span> ホンダ車</h1>
+        <p class="subtitle">ご回答を分析して、最適な車種を3台ご提案します</p>
+    </div>
+</div>
+
+<div class="main-container">
+
+    {% for car in top_cars %}
+
+    {% if not loop.first %}
+    <div class="cars-divider">第 {{ car.rank }} 候補</div>
+    {% endif %}
+
+    <div class="car-card">
+
+        <!-- Top bar -->
+        <div class="card-topbar aspect-{{ car.aspect }}">
+            <div class="rank-badge">
+                <div class="rank-circle rank-{{ car.rank }}">{{ car.rank }}</div>
+                <div class="rank-text">
+                    <strong>第{{ car.rank }}候補</strong>
+                    適合度
+                </div>
+            </div>
+            {% if car.label %}
+            <span class="aspect-badge">{{ car.label }}</span>
+            {% endif %}
+            <div class="score-display">
+                <span class="score-number">{{ car.score_pct }}%</span>
+                <span class="score-label">マッチ率</span>
+            </div>
+        </div>
+
+        <!-- Main card body -->
+        <div class="card-body-inner">
+            <div class="car-main-row">
+
+                <!-- Image -->
+                <div class="car-image-wrap">
+                    <img src="{{ url_for('static', filename=car.image) }}" alt="{{ car.name }}" />
+                </div>
+
+                <!-- Info -->
+                <div class="car-info">
+                    <h2 class="car-name">
+                        {% set parts = car.name.split(' ') %}
+                        <span>Honda</span> {{ ' '.join(parts[1:]) }}
+                    </h2>
+                    <p class="car-desc">{{ car.base_description }}</p>
+
+                    <!-- Budget fit -->
+                    {% if car.new_used == 'new' and car.budget_fit is not none %}
+                        {% if car.budget_fit %}
+                        <div class="budget-pill fit">✅ ご予算内に収まります</div>
+                        {% else %}
+                        <div class="budget-pill exceed">⚠️ 予算をやや超えますが機能面で優秀</div>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- Warnings -->
+                    {% if car.warnings %}
+                        {% for w in car.warnings %}
+                        <div class="warning-strip">⚠️ {{ w }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- CTA -->
+                    <div class="card-cta">
+                        <a href="{{ car.new_url }}" target="_blank" class="btn-cta-new">
+                            🚗 新車情報を見る
+                        </a>
+                        {% if car.used_url %}
+                        <a href="{{ car.used_url }}" target="_blank" class="btn-cta-used">
+                            🔍 中古車を探す
+                        </a>
+                        {% else %}
+                        <span class="btn-cta-disabled">中古車情報なし</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature detail section -->
+        {% if car.feature_cards %}
+        <div class="feature-section">
+            <div class="feature-section-title">
+                📋 あなたのご要望との適合ポイント
+            </div>
+            <div class="feature-cards-grid">
+                {% for fc in car.feature_cards %}
+                <div class="feature-card {% if fc.is_primary %}primary{% endif %}">
+                    <div class="feature-card-header">
+                        <span class="feature-icon">{{ fc.icon }}</span>
+                        <span class="feature-label">
+                            {{ fc.label }}
+                            {% if fc.is_primary %}<span class="primary-tag">最優先</span>{% endif %}
+                        </span>
+                    </div>
+                    <p class="feature-detail">{{ fc.detail }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+
+    <!-- Dealer contact section -->
+    <div class="dealer-section">
+        <h3>🏪 セキショウホンダへのお問い合わせ</h3>
+        <p>
+            ご興味のある車種が見つかりましたら、<br>
+            お近くのショールームへぜひご来店ください。<br>
+            試乗・見積もりのご予約もお気軽にどうぞ。
+        </p>
+        <div class="dealer-btns">
+            <a href="https://www.sekisho-honda.com/home/showroom_ibaraki.html" target="_blank" class="btn-dealer">
+                📍 茨城のショールーム
+            </a>
+            <a href="https://www.sekisho-honda.com/home/showroom_fukushima.html" target="_blank" class="btn-dealer outline">
+                📍 福島のショールーム
+            </a>
+        </div>
+    </div>
+
+    <!-- Retry -->
+    <div class="retry-section">
+        <a href="/questionnaire" class="btn-retry">↩ もう一度診断する</a>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <a href="https://www.sekisho-honda.com/" target="_blank">Honda Cars 茨城 / Honda Cars 福島</a>
+    &nbsp;｜&nbsp; セキショウホンダ &copy; 2025
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

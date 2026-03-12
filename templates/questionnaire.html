@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>アンケート | Honda Cars 茨城 / Honda Cars 福島</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --red:       #cc0000;
+      --red-dark:  #a00000;
+      --red-pale:  #fff4f4;
+      --gray-bg:   #f4f4f6;
+      --gray-card: #ffffff;
+      --border:    #e0e0e0;
+      --text:      #1e1e1e;
+      --text-sub:  #555;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--gray-bg);
+      color: var(--text);
+    }
+
+    /* ── Site header ── */
+    .site-header {
+      background: #ffffff;
+      border-bottom: 3px solid var(--red);
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-header .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+    }
+    .site-header .brand img { height: 56px; object-fit: contain; }
+    .site-header .brand-text {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1.4;
+    }
+    .header-back {
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .header-back:hover { color: var(--red); }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+    }
+    .progress-label {
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      margin-bottom: 5px;
+    }
+    .progress {
+      height: 5px;
+      border-radius: 3px;
+      background: var(--border);
+    }
+    .progress-bar {
+      background: var(--red);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    /* ── Page wrap ── */
+    .page-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .page-title span { color: var(--red); }
+    .page-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-sub);
+      margin-bottom: 24px;
+    }
+
+    /* ── Section cards ── */
+    .q-card {
+      background: var(--gray-card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: box-shadow 0.2s;
+    }
+    .q-card:focus-within {
+      box-shadow: 0 4px 18px rgba(204,0,0,0.10);
+      border-color: #ffb3b3;
+    }
+
+    .q-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--red);
+      color: white;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .q-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    /* Options grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .options-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.15s, border-color 0.15s;
+      line-height: 1.4;
+      background: var(--gray-bg);
+    }
+    .option-label:hover { background: var(--red-pale); border-color: #ffaaaa; }
+
+    .option-label input[type="radio"],
+    .option-label input[type="checkbox"] {
+      accent-color: var(--red);
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .option-label input:checked + span,
+    .option-label:has(input:checked) {
+      background: var(--red-pale);
+      border-color: var(--red);
+      font-weight: 700;
+    }
+    .option-label:has(input:checked) {
+      background: var(--red-pale);
+      border-color: var(--red);
+    }
+
+    /* Error messages */
+    .q-error {
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-top: 8px;
+      display: none;
+    }
+    .q-error.visible { display: block; }
+
+    /* Note text */
+    .q-note {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-top: 8px;
+    }
+
+    /* ── Submit ── */
+    .submit-wrap {
+      text-align: center;
+      margin-top: 8px;
+    }
+    .btn-submit {
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 15px 60px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 5px 18px rgba(204,0,0,0.30);
+    }
+    .btn-submit:hover {
+      background: var(--red-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(204,0,0,0.40);
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: #222;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.70rem;
+      text-align: center;
+      padding: 12px;
+    }
+    .site-footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+
+    @media (max-width: 540px) {
+      .options-grid { grid-template-columns: 1fr; }
+      .options-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+      .btn-submit { width: 100%; padding: 14px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Site header -->
+<header class="site-header">
+  <a href="/" class="brand">
+    <img src="{{ url_for('static', filename='image/honda-logo.jpg') }}" alt="Honda" />
+    <span class="brand-text">Honda Cars 茨城<br>Honda Cars 福島</span>
+  </a>
+  <a href="/" class="header-back">← トップへ戻る</a>
+</header>
+
+<!-- Progress bar -->
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">質問 1 / 9</div>
+  <div class="progress">
+    <div class="progress-bar" id="progressBar" style="width: 11%"></div>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <h1 class="page-title">ホンダ車<span>おすすめ</span>アンケート</h1>
+  <p class="page-subtitle">すべての質問にお答えください（所要時間：約2〜3分）</p>
+
+  <form action="/result" method="POST" id="carForm" novalidate>
+
+    <!-- Q1 性別 -->
+    <div class="q-card" data-q="1">
+      <div class="q-title">
+        <span class="q-number">1</span>性別を教えてください
+      </div>
+      <div class="options-grid cols-3">
+        <label class="option-label">
+          <input type="radio" name="gender" value="男性" required />
+          <span>男性</span>
+        </label>
+        <label class="option-label">
+          <input type="radio" name="gender" value="女性" />
+          <span>女性</span>
+        </label>
+        <label class="option-label">
+          <input type="radio" name="gender" value="回答しない" />
+          <span>回答しない</span>
+        </label>
+      </div>
+      <div class="q-error" id="gender_error">選択してください。</div>
+    </div>
+
+    <!-- Q2 年齢 -->
+    <div class="q-card" data-q="2">
+      <div class="q-title">
+        <span class="q-number">2</span>年齢を教えてください
+      </div>
+      <div class="options-grid">
+        <label class="option-label"><input type="radio" name="age" value="20歳未満" required /><span>20歳未満</span></label>
+        <label class="option-label"><input type="radio" name="age" value="20歳～29歳" /><span>20歳〜29歳</span></label>
+        <label class="option-label"><input type="radio" name="age" value="30歳～39歳" /><span>30歳〜39歳</span></label>
+        <label class="option-label"><input type="radio" name="age" value="40歳～49歳" /><span>40歳〜49歳</span></label>
+        <label class="option-label"><input type="radio" name="age" value="50歳～59歳" /><span>50歳〜59歳</span></label>
+        <label class="option-label"><input type="radio" name="age" value="60歳～69歳" /><span>60歳〜69歳</span></label>
+        <label class="option-label"><input type="radio" name="age" value="70歳以上" /><span>70歳以上</span></label>
+      </div>
+      <div class="q-error" id="age_error">選択してください。</div>
+    </div>
+
+    <!-- Q3 利用目的 -->
+    <div class="q-card" data-q="3">
+      <div class="q-title">
+        <span class="q-number">3</span>車はどのような目的で主に利用したいですか？
+      </div>
+      <p class="q-note">複数回答可</p>
+      <div class="options-grid" style="margin-top:10px">
+        <label class="option-label"><input type="checkbox" name="purpose" value="通勤・通学" /><span>通勤・通学</span></label>
+        <label class="option-label"><input type="checkbox" name="purpose" value="お子様の送迎" /><span>お子様の送迎</span></label>
+        <label class="option-label"><input type="checkbox" name="purpose" value="旅行" /><span>旅行</span></label>
+        <label class="option-label"><input type="checkbox" name="purpose" value="買い物・お出かけ" /><span>買い物・お出かけ</span></label>
+        <label class="option-label"><input type="checkbox" name="purpose" value="介護" /><span>介護</span></label>
+        <label class="option-label"><input type="checkbox" name="purpose" value="趣味（アウトドア等）" /><span>趣味（アウトドア等）</span></label>
+        <label class="option-label" style="grid-column: span 2;"><input type="checkbox" name="purpose" value="勤務時での利用" /><span>勤務時での利用（営業・荷物輸送など）</span></label>
+      </div>
+      <div class="q-error" id="purpose_error">少なくとも1つ選択してください。</div>
+    </div>
+
+    <!-- Q4 乗車人数 -->
+    <div class="q-card" data-q="4">
+      <div class="q-title">
+        <span class="q-number">4</span>最大何人乗りの車が必要ですか？
+      </div>
+      <div class="options-grid cols-3">
+        <label class="option-label"><input type="radio" name="seating" value="1人" required /><span>1人</span></label>
+        <label class="option-label"><input type="radio" name="seating" value="2人" /><span>2人</span></label>
+        <label class="option-label"><input type="radio" name="seating" value="3人" /><span>3人</span></label>
+        <label class="option-label"><input type="radio" name="seating" value="4人" /><span>4人</span></label>
+        <label class="option-label"><input type="radio" name="seating" value="5人" /><span>5人</span></label>
+        <label class="option-label"><input type="radio" name="seating" value="6人以上" /><span>6人以上</span></label>
+      </div>
+      <div class="q-error" id="seating_error">選択してください。</div>
+    </div>
+
+    <!-- Q5 予算 -->
+    <div class="q-card" data-q="5">
+      <div class="q-title">
+        <span class="q-number">5</span>ご購入時のご予算を教えてください
+      </div>
+      <div class="options-grid">
+        <label class="option-label"><input type="radio" name="budget" value="100万円未満" required /><span>100万円未満</span></label>
+        <label class="option-label"><input type="radio" name="budget" value="100万円～199万円" /><span>100万〜199万円</span></label>
+        <label class="option-label"><input type="radio" name="budget" value="200万円～299万円" /><span>200万〜299万円</span></label>
+        <label class="option-label"><input type="radio" name="budget" value="300万円～399万円" /><span>300万〜399万円</span></label>
+        <label class="option-label"><input type="radio" name="budget" value="400万円～499万円" /><span>400万〜499万円</span></label>
+        <label class="option-label"><input type="radio" name="budget" value="500万円以上" /><span>500万円以上</span></label>
+      </div>
+      <div class="q-error" id="budget_error">選択してください。</div>
+    </div>
+
+    <!-- Q6 新車/中古車 -->
+    <div class="q-card" data-q="6">
+      <div class="q-title">
+        <span class="q-number">6</span>新車・中古車どちらをご検討ですか？
+      </div>
+      <div class="options-grid cols-3">
+        <label class="option-label"><input type="radio" name="new_used" value="new" required /><span>新車</span></label>
+        <label class="option-label"><input type="radio" name="new_used" value="used" /><span>中古車</span></label>
+      </div>
+      <div class="q-error" id="condition_error">選択してください。</div>
+    </div>
+
+    <!-- Q7 最重視ポイント -->
+    <div class="q-card" data-q="7">
+      <div class="q-title">
+        <span class="q-number">7</span>最も重視するポイントを1つ選んでください
+      </div>
+      <div class="options-grid">
+        <label class="option-label"><input type="radio" name="primary_priority" value="価格" required /><span>💴 価格</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="燃費" /><span>⛽ 燃費</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="エンジンパワー" /><span>⚡ エンジンパワー</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="デザイン" /><span>✨ デザイン</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="収納・トランクスペース" /><span>📦 収納・トランクスペース</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="先進性" /><span>🔬 先進性</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="乗り心地" /><span>😌 乗り心地</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="安全装備" /><span>🛡️ 安全装備</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="環境への配慮" /><span>🌱 環境への配慮</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="運転のしやすさ" /><span>🎯 運転のしやすさ</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="社内空間" /><span>🚗 社内空間</span></label>
+        <label class="option-label"><input type="radio" name="primary_priority" value="乗り降りしやすさ" /><span>🚪 乗り降りしやすさ</span></label>
+      </div>
+      <div class="q-error" id="primary_priority_error">選択してください。</div>
+    </div>
+
+    <!-- Q8 追加重視ポイント -->
+    <div class="q-card" data-q="8">
+      <div class="q-title">
+        <span class="q-number">8</span>その他重視したいポイントを2つ選んでください
+      </div>
+      <div class="options-grid">
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="価格" /><span>💴 価格</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="燃費" /><span>⛽ 燃費</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="エンジンパワー" /><span>⚡ エンジンパワー</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="デザイン" /><span>✨ デザイン</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="収納・トランクスペース" /><span>📦 収納・トランクスペース</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="先進性" /><span>🔬 先進性</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="乗り心地" /><span>😌 乗り心地</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="安全装備" /><span>🛡️ 安全装備</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="環境への配慮" /><span>🌱 環境への配慮</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="運転のしやすさ" /><span>🎯 運転のしやすさ</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="社内空間" /><span>🚗 社内空間</span></label>
+        <label class="option-label"><input type="checkbox" name="secondary_priority" value="乗り降りしやすさ" /><span>🚪 乗り降りしやすさ</span></label>
+      </div>
+      <div class="q-error" id="secondary_error">ちょうど2つ選択してください。</div>
+    </div>
+
+    <!-- Q9 趣味 -->
+    <div class="q-card" data-q="9">
+      <div class="q-title">
+        <span class="q-number">9</span>あなたの趣味を教えてください
+      </div>
+      <p class="q-note">複数回答可・任意</p>
+      <div class="options-grid" style="margin-top:10px">
+        <label class="option-label"><input type="checkbox" name="hobby" value="アウトドア" /><span>アウトドア</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="旅行・ドライブ・バイク" /><span>旅行・ドライブ・バイク</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="ショッピング・グルメ" /><span>ショッピング・グルメ</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="スポーツ観戦・芸術鑑賞" /><span>スポーツ観戦・芸術鑑賞</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="楽器・絵画・写真" /><span>楽器・絵画・写真</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="運動・スポーツ" /><span>運動・スポーツ</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="読書・マンガ・ゲーム・テレビ" /><span>読書・マンガ・ゲーム</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="ネットサービスの利用" /><span>ネットサービス</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="料理・ガーデニング・DIY" /><span>料理・ガーデニング・DIY</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="ペット" /><span>ペット</span></label>
+        <label class="option-label"><input type="checkbox" name="hobby" value="その他" /><span>その他</span></label>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-wrap">
+      <button type="submit" class="btn-submit">結果を見る →</button>
+    </div>
+
+  </form>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <a href="https://www.sekisho-honda.com/" target="_blank">Honda Cars 茨城 / Honda Cars 福島</a>
+  &nbsp;｜&nbsp; セキショウホンダ &copy; 2025
+</footer>
+
+<script>
+  // Progress bar
+  const allCards = document.querySelectorAll('.q-card');
+  const totalQ = allCards.length;
+  const progressBar = document.getElementById('progressBar');
+  const progressLabel = document.getElementById('progressLabel');
+
+  function updateProgress() {
+    let answered = 0;
+    document.querySelectorAll('.q-card').forEach((card, i) => {
+      const radios = card.querySelectorAll('input[type=radio]');
+      const checks = card.querySelectorAll('input[type=checkbox]');
+      if (radios.length > 0 && card.querySelector('input[type=radio]:checked')) answered++;
+      else if (checks.length > 0 && card.querySelector('input[type=checkbox]:checked')) answered++;
+      else if (radios.length === 0 && checks.length === 0) answered++; // no inputs
+    });
+    const pct = Math.round((answered / totalQ) * 100);
+    progressBar.style.width = Math.max(pct, 11) + '%';
+    progressLabel.textContent = `質問 ${Math.min(answered+1, totalQ)} / ${totalQ}`;
+  }
+
+  document.getElementById('carForm').addEventListener('change', updateProgress);
+
+  // Secondary priority: limit to 2
+  const secondaryChecks = document.querySelectorAll('input[name="secondary_priority"]');
+  secondaryChecks.forEach(cb => {
+    cb.addEventListener('change', () => {
+      const checked = document.querySelectorAll('input[name="secondary_priority"]:checked');
+      if (checked.length > 2) {
+        cb.checked = false;
+      }
+    });
+  });
+
+  // Validation
+  document.getElementById('carForm').addEventListener('submit', function(e) {
+    let valid = true;
+
+    function check(name, errorId, isCheckbox, exact) {
+      const inputs = document.querySelectorAll(`input[name="${name}"]`);
+      const checked = document.querySelectorAll(`input[name="${name}"]:checked`);
+      const el = document.getElementById(errorId);
+      let ok = isCheckbox ? checked.length >= 1 : checked.length === 1;
+      if (exact) ok = checked.length === exact;
+      if (!ok) { el.classList.add('visible'); valid = false; }
+      else { el.classList.remove('visible'); }
+    }
+
+    check('gender', 'gender_error', false);
+    check('age', 'age_error', false);
+    check('purpose', 'purpose_error', true);
+    check('seating', 'seating_error', false);
+    check('budget', 'budget_error', false);
+    check('new_used', 'condition_error', false);
+    check('primary_priority', 'primary_priority_error', false);
+    check('secondary_priority', 'secondary_error', false, 2);
+
+    if (!valid) {
+      e.preventDefault();
+      const firstErr = document.querySelector('.q-error.visible');
+      if (firstErr) firstErr.closest('.q-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+</script>
+
+</body>
+</html>
