@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify 
 import csv
 import os
+from sqlalchemy import func, desc
 import pandas as pd
+from config import Config
+from models import db, UserResponse
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -12,6 +15,13 @@ import logging
 from datetime import datetime
 logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
+app.config.from_object(Config)
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
+
+logging.basicConfig(level=logging.INFO)
 
 priority_indices = {
     "価格": 26, "燃費": 27, "デザイン": 28, "安全装備": 29,
@@ -963,6 +973,31 @@ def result():
     file_exists = os.path.isfile(csv_file)
     top_scores = ", ".join([f"{car['name']}:{car['score']:.2f}" for car in top_cars_data])
     try:
+        new_response = UserResponse(
+            gender=gender,
+            age_group=age_group,
+            work_type=work_type,
+            purposes=", ".join(purpose_list),
+            seating=seating,
+            budget=budget,
+            new_used=new_used,
+            primary_priority=primary_priority,
+            secondary_priorities=", ".join([p for p in secondary_priorities if p]),
+            hobbies=", ".join(hobbies),
+            top_cars=", ".join([car['name'] for car in top_cars_data]),
+            scores=", ".join([f"{car['name']}:{car['score']:.3f}" for car in top_cars_data]),
+            raw_user_features=str(user_features)
+        )
+        db.session.add(new_response)
+        db.session.commit()
+        logging.info(f"Saved response ID: {new_response.id}")
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        db.session.rollback()
+
+    return render_template("result.html", top_cars=top_cars_data, num_options=3)
+'''
+    try:
         with open(csv_file, mode="a", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
             if not file_exists:
@@ -976,6 +1011,9 @@ def result():
         logging.error(f"Error writing CSV: {e}")
 
     return render_template("result.html", top_cars=top_cars_data, num_options=3)
+'''
+
+
 
 @app.route('/download')
 def download():

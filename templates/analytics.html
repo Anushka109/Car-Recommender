@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>データ分析 - Honda Car Recommender</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; }
+        h1 { color: #2E8B57; }
+        .card { 
+            background: white; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background: #2E8B57; color: white; }
+        .debug { background: #fff3cd; padding: 10px; border: 1px solid #ffeeba; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 データ分析ダッシュボード</h1>
+        <a href="/">← ホームに戻る</a>
+
+        <div class="card">
+            <h2>総回答数: {{ stats.total_responses }} 件</h2>
+        </div>
+
+        <div class="debug">
+            <strong>Debug Info:</strong><br>
+            Popular Purposes: {{ stats.popular_purposes|length }} items<br>
+            Popular Priorities: {{ stats.popular_priorities|length }} items
+        </div>
+
+        <div class="card">
+            <h2>人気の利用目的</h2>
+            {% if stats.popular_purposes %}
+            <table>
+                <tr><th>目的</th><th>件数</th></tr>
+                {% for purpose, count in stats.popular_purposes.items() %}
+                <tr><td>{{ purpose or '未指定' }}</td><td><strong>{{ count }}</strong></td></tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No data yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>最も重視される優先項目</h2>
+            {% if stats.popular_priorities %}
+            <table>
+                <tr><th>優先項目</th><th>件数</th></tr>
+                {% for p, count in stats.popular_priorities.items() %}
+                <tr><td>{{ p or '未指定' }}</td><td><strong>{{ count }}</strong></td></tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
+
+    </div>
+</body>
+</html>
